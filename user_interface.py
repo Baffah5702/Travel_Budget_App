@@ -1,4 +1,6 @@
+from currency_converter import currency_converter
 import streamlit as st
+
 
 # Page configuration
 st.set_page_config(
@@ -75,7 +77,7 @@ if menu == "Home":
     st.success("Welcome to your Travel Budget baffa!")
 
 elif menu == "Currency Converter":
-    st.info("Currency Converter module coming soon.")
+    currency_converter()
 
 elif menu == "Budget Calculator":
     st.info("Budget Calculator module coming soon.")

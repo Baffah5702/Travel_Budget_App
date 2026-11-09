@@ -51,7 +51,7 @@ def extract_price(text):
     return float(match.group().replace(",", ""))
 
 class CurrencyConverter:
-    def _init_(self, rates):
+    def __init__(self, rates):
         self.rates = rates
     def convert(self, amount, from_currency, to_currency):
         try:
@@ -63,7 +63,7 @@ class CurrencyConverter:
             raise ConversionError("Failed to convert - enter a valid number")
 
 class Expense:
-    def _init_(self, category, amount, note=""):
+    def __init__(self, category, amount, note=""):
         self.category = category
         self.amount = float(amount)
         self.note = note
@@ -72,7 +72,7 @@ class Expense:
         return {"category": self.category, "amount": self.amount, "note": self.note, "date": self.date}
 
 class TripBudget:
-    def _init_(self, home_currency, destination, total_budget, days, style="Comfort", group_size=1, travel_date=""):
+    def __init__(self, home_currency, destination, total_budget, days, style="Comfort", group_size=1, travel_date=""):
         self.home_currency = validate_currency_code(home_currency)
         self.destination = destination.strip().upper()
         self.total_budget = float(total_budget)
@@ -110,7 +110,7 @@ class TripBudget:
         return {"hotel": round(hotel, 2), "food": round(food, 2), "transport": round(transport, 2), "flight": round(flight, 2), "total": round(total, 2)}
 
 class BudgetReport:
-    def _init_(self, trip, converter):
+    def __init__(self, trip, converter):
         self.trip = trip
         self.converter = converter
     def ai_advice(self):
@@ -181,5 +181,5 @@ def main():
         except Exception as e:
             st.error(f"Error: {e}")
 
-if _name_ == "_main_":
+if __name__ == "_main_":
     main()

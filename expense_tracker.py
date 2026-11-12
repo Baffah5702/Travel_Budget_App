@@ -1,6 +1,7 @@
 import csv
 import json
 import re
+import streamlit as st
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -204,3 +205,103 @@ if __name__ == "__main__":
 
     # 4. File Handling Test
     tracker.save_to_json("my_trip_expenses.json")
+if __name__ == "__main__":
+    pass
+
+def expense_tracker():
+    st.subheader("💰 Expense Tracker")
+
+    st.write("Record and manage your travel expenses.")
+
+    tracker = ExpenseTracker()
+    tracker.load_from_json()
+    st.session_state["expenses"] = tracker.expenses
+
+    # Add a new expense
+    with st.form("expense_form"):
+
+        st.subheader("Add a New Expense")
+
+        amount = st.number_input(
+            "Expense Amount",
+            min_value=0.01,
+            value=1.0,
+            step=0.01
+        )
+
+        category = st.selectbox(
+            "Expense Category",
+            [
+                "Transport",
+                "Food",
+                "Accommodation",
+                "Shopping",
+                "Entertainment",
+                "Other"
+            ]
+        )
+
+        currency = st.selectbox(
+            "Currency",
+            ["USD", "NGN", "GBP", "EUR", "CAD", "GHS"]
+        )
+
+        description = st.text_input("Expense Description")
+
+        submitted = st.form_submit_button("Add Expense")
+
+        if submitted:
+            try:
+                expense = Expense(
+                    amount=amount,
+                    category=category,
+                    currency=currency,
+                    description=description
+                )
+
+                tracker.add_expense(expense)
+                tracker.save_to_json()
+
+                st.success("Expense added successfully!")
+
+            except ExpenseError as err:
+                st.error(str(err))
+
+    # Expense History
+    st.divider()
+    st.subheader("📋 Expense History")
+
+    if tracker.expenses:
+        for expense in reversed(tracker.expenses):
+            st.write(
+                f"**{expense.category}** — "
+                f"{expense.currency} {expense.amount:,.2f}"
+            )
+
+            st.caption(
+                f"{expense.description} | {expense.date}"
+            )
+    else:
+        st.info("No expenses recorded yet.")
+
+    # Total Spending
+    st.divider()
+    st.subheader("📊 Total Spending")
+
+    if tracker.expenses:
+        totals = {}
+
+        for expense in tracker.expenses:
+            currency = expense.currency
+
+            totals[currency] = (
+                totals.get(currency, 0) + expense.amount
+            )
+
+        for currency, total in totals.items():
+            st.metric(
+                label=f"Total Spent ({currency})",
+                value=f"{total:,.2f}"
+            )
+    else:
+        st.info("No spending to calculate yet.")
